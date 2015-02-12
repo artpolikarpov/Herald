@@ -183,14 +183,14 @@ media: {
 ```
 ###### A note on onRun and fallback
 
-In addition to configuration you can also add `onRun` and `fallback` to your media. For more details see the [onRun](#onrun-advanced-usage-only) section.
+In addition to configuration you can also add `onRun` and `fallback` to your media. For more details see the [onRun](#onrun-advanced-usage-only-experimental) section.
 
 ```js
 //not a functional example, simplified for readability
 media: {
   webNotifications: {
-    onRun: function () {
-      if (userIsOfline)
+    onRun: function (notification, user) {
+      if (notification.data.transferable && !user.onlineNow)
         return this.transfer('email');
       else
         return this.run()
@@ -408,13 +408,13 @@ Use this setting with care. Under the hood, Herald just builds a TTL index on th
 
 ## onRun [advanced usage only, experimental]
 
-Every courier calls the onRun function before sending a notification on a medium. The function called will have a `this` context with four functions. The return value of onRun must be the result of one of these four functions.
+Every courier calls the onRun function before sending a notification on a medium. The function will be called with two arguments `notification` and `user`, and will have a `this` context with four functions. The return value of onRun must be the result of one of these four functions.
 
 ```js
 Herald.addCourier(name, {
   media: { 
     medium: {
-      onRun: function () {
+      onRun: function (notification, user) {
         return this.run() //if called you must return one of the functions
       }
     }
